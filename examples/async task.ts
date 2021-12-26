@@ -1,9 +1,15 @@
+#!/usr/bin/env -S deno run
+
 import { delay } from 'https://deno.land/std@0.119.0/async/mod.ts';
 import { Task, series, parallel } from '../mod.ts';
 
-Task('breakfast', function() {
-  console.log('I eat breakfast');
+Task('getUp', function() {
+  console.log('I get up in the morning');
 });
+
+function breakfast() {
+  console.log('I eat breakfast');
+}
 
 async function watchTv() {
   console.log('I watch tv');
@@ -22,7 +28,8 @@ function sleep() {
 }
 
 Task('default', series(
-  'breakfast',
+  'getUp',
+  breakfast,
   parallel(watchTv, snack),
   sleep,
 ));
