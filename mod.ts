@@ -1,7 +1,13 @@
 import { parse } from 'https://deno.land/std@0.119.0/flags/mod.ts';
 
 const allTasks: Record<string, Task> = {};
-export function Task(name: string, cbk: Task) {
+export function task(cbk: Task): void;
+export function task(name: string, cbk: Task): void;
+export function task(name: any, cbk?: any) {
+  if (typeof name == 'function') {
+    cbk = name;
+    name = 'default';
+  }
   allTasks[name] = cbk;
 }
 
@@ -50,11 +56,11 @@ export function dest(glob: string) {
     
 }
 
-(async () => {
+export async function run() {
   await Promise.resolve();
   const args = parse(Deno.args);
   if (args.l || args.list) {
-    console.log('All tasks');
+    console.log('All tasks:');
     console.log(Object.keys(allTasks));
   } else {
     let torun = args._;
@@ -62,7 +68,7 @@ export function dest(glob: string) {
       torun = ['default'];
     }
     const torunTasks = torun.map(e => {
-      let t = getTask(String(e));
+      const t = getTask(String(e));
       if (!t) {
         throw `Cannot find task:${e}`;
       }
@@ -70,4 +76,6 @@ export function dest(glob: string) {
     });
     series(...torunTasks)();
   }
-})()
+}
+
+task.run = run;

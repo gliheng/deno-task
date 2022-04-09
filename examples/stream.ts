@@ -1,9 +1,11 @@
-import { Task, series } from '../mod.ts';
+import { task } from '../mod.ts';
 
-Task('who', async function() {
-  let p = Deno.run({
+task('who', async function() {
+  const p = Deno.run({
     cmd: ['whoami'],
     stdout: 'piped',
   });
   return await p.output();
 });
+
+task.run();
